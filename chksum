@@ -1,0 +1,29 @@
+#!/bin/bash
+red=`tput setaf 1`
+green=`tput setaf 2`
+reset=`tput sgr0`
+
+checkChecksum() {
+	fileName=$1
+	checksum=$2
+	if [ -f $fileName ]; then
+		fileChecksum=$(md5 -q $fileName)
+		if [ -z "$fileChecksum" ]; then
+			echo "[ERROR] unable to check $fileName checksum"
+		else
+			if [ "$checksum" == "$fileChecksum" ]; then
+				echo "[${green}SUCCESS${reset}] (file: $fileChecksum | control: $checksum)"
+			else
+				echo "[${red}WRONG${reset}] (file: $fileChecksum | control: $checksum)"
+			fi
+		fi
+	else
+		echo "[ERROR] unable to find $fileName"
+	fi
+}
+
+if [ -z "$1" ] || [ -z "$2" ]; then
+	echo "please write filename, usage: chksum filename checksum"
+else
+	checkChecksum $1 $2
+fi
